@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#07090e" />
   <title>Ministerio de Alabanza</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -25,6 +26,7 @@
       --metronome-color-rgb: 110, 231, 183;
       --metronome-intensity-spread: 50px;
       --metronome-intensity-size: 15px;
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
     }
 
     * {
@@ -32,6 +34,7 @@
       margin: 0;
       padding: 0;
       font-family: 'Plus Jakarta Sans', sans-serif;
+      -webkit-tap-highlight-color: transparent;
     }
 
     html, body {
@@ -54,6 +57,7 @@
       margin: 0 auto;
       box-shadow: 0 0 50px rgba(0,0,0,0.8);
       position: relative;
+      padding-bottom: calc(74px + var(--safe-bottom));
     }
 
     button, input {
@@ -118,10 +122,10 @@
 
     .team-btn {
       width: 100%;
-      padding: 0.9rem 1.2rem;
+      padding: 0.95rem 1.1rem;
       border-radius: var(--radius);
       border: 1px solid var(--card-border);
-      background: rgba(255, 255, 255, 0.05);
+      background: rgba(255,255,255,0.05);
       color: var(--text-main);
       font-size: 0.95rem;
       font-weight: 700;
@@ -130,6 +134,7 @@
       align-items: center;
       justify-content: space-between;
       transition: all 0.2s ease;
+      min-height: 52px;
     }
 
     .team-btn:hover,
@@ -159,7 +164,7 @@
       align-items: center;
       justify-content: space-between;
       gap: 0.75rem;
-      padding: 1.2rem 1rem 0.8rem;
+      padding: 1.1rem 0.9rem 0.7rem;
     }
 
     .header-left {
@@ -195,10 +200,18 @@
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       color: transparent;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
     }
 
     .location-badge {
       flex-shrink: 0;
+      min-height: 36px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
       font-size: 0.72rem;
       font-weight: 700;
       background: rgba(110, 231, 183, 0.15);
@@ -207,11 +220,13 @@
       border-radius: 10px;
       padding: 0.35rem 0.6rem;
       cursor: pointer;
+      user-select: none;
+      -webkit-user-select: none;
     }
 
     main {
       flex: 1;
-      padding: 1rem;
+      padding: 0.8rem 0.9rem 0.4rem;
       overflow-y: auto;
       padding-bottom: 100px;
     }
@@ -224,29 +239,33 @@
       margin: 0 auto;
       max-width: 600px;
       display: flex;
-      gap: 0.4rem;
-      background: rgba(10, 14, 23, 0.95);
+      gap: 0.38rem;
+      background: rgba(10, 14, 23, 0.96);
       backdrop-filter: blur(16px);
       border-top: 1px solid var(--card-border);
-      padding: 0.6rem;
+      padding: 0.55rem 0.5rem calc(0.55rem + var(--safe-bottom));
       z-index: 100;
+      box-shadow: 0 -10px 24px rgba(0,0,0,0.28);
     }
 
     nav button {
       flex: 1;
-      padding: 0.65rem 0.2rem;
+      min-height: 58px;
+      padding: 0.5rem 0.15rem 0.35rem;
       border: 1px solid transparent;
       background: transparent;
       color: var(--text-muted);
       font-weight: 600;
-      font-size: 0.75rem;
+      font-size: 0.73rem;
       border-radius: 14px;
       display: flex;
       flex-direction: column;
       align-items: center;
+      justify-content: center;
       gap: 4px;
       cursor: pointer;
       transition: all 0.25s;
+      line-height: 1.1;
     }
 
     nav button .icon {
@@ -276,7 +295,7 @@
 
     .search-wrapper {
       position: relative;
-      margin-bottom: 1.25rem;
+      margin-bottom: 1.1rem;
     }
 
     .search-wrapper input {
@@ -288,6 +307,7 @@
       font-size: 0.95rem;
       padding: 0.9rem 1rem 0.9rem 2.85rem;
       backdrop-filter: blur(12px);
+      min-height: 48px;
     }
 
     .search-wrapper input:focus {
@@ -302,13 +322,14 @@
       left: 1rem;
       transform: translateY(-50%);
       color: var(--text-muted);
+      font-size: 1rem;
     }
 
     .song-card {
       background: var(--bg-panel);
       border: 1px solid var(--card-border);
       border-radius: var(--radius);
-      padding: 1rem;
+      padding: 0.9rem 0.9rem 0.8rem;
       margin-bottom: 0.85rem;
       box-shadow: 0 10px 25px -5px rgba(0,0,0,0.4);
       transition: all 0.2s ease;
@@ -326,13 +347,14 @@
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
-      margin-bottom: 0.75rem;
+      margin-bottom: 0.7rem;
+      gap: 0.5rem;
     }
 
     .song-info {
       flex: 1;
       min-width: 0;
-      margin-right: 0.5rem;
+      margin-right: 0.25rem;
     }
 
     .song-info h3 {
@@ -371,6 +393,7 @@
       background: rgba(255,255,255,0.05);
       color: var(--text-muted);
       border: none;
+      min-height: 28px;
     }
 
     .badge.key {
@@ -402,25 +425,26 @@
     }
 
     .song-structure {
-      margin: 0.6rem 0;
+      margin: 0.55rem 0;
       font-size: 0.75rem;
       color: var(--text-muted);
       line-height: 1.4;
       background: rgba(0,0,0,0.2);
       border: 1px solid rgba(255,255,255,0.03);
       border-radius: 8px;
-      padding: 0.4rem 0.6rem;
+      padding: 0.45rem 0.6rem;
     }
 
     .song-main-actions {
       display: flex;
-      gap: 0.4rem;
+      gap: 0.35rem;
       align-items: center;
+      flex-shrink: 0;
     }
 
     .action-btn {
-      width: 36px;
-      height: 36px;
+      width: 38px;
+      height: 38px;
       border-radius: 10px;
       border: 1px solid var(--card-border);
       background: rgba(255,255,255,0.04);
@@ -432,6 +456,7 @@
       font-size: 1.05rem;
       line-height: 1;
       transition: all 0.2s ease;
+      padding: 0;
     }
 
     .action-btn.star.active {
@@ -455,9 +480,10 @@
 
     .drag-handle {
       color: var(--text-muted);
-      font-size: 1.1rem;
+      font-size: 1.15rem;
       cursor: grab;
-      margin-right: 0.4rem;
+      margin-right: 0.15rem;
+      padding: 0.2rem;
     }
 
     .song-links {
@@ -470,8 +496,9 @@
 
     .format-btn {
       flex: 1;
-      min-width: 70px;
-      padding: 0.45rem 0.2rem;
+      min-width: 72px;
+      min-height: 38px;
+      padding: 0.5rem 0.3rem;
       border-radius: 10px;
       border: 1px solid var(--card-border);
       background: rgba(255,255,255,0.04);
@@ -488,7 +515,7 @@
     }
 
     .section-title {
-      font-size: 1.1rem;
+      font-size: 1.08rem;
       font-weight: 800;
       margin-bottom: 0.3rem;
     }
@@ -591,6 +618,9 @@
       align-items: center;
       justify-content: center;
       transition: all 0.2s ease;
+      min-width: 34px;
+      min-height: 34px;
+      padding: 0;
     }
 
     .nav-arrow {
@@ -675,6 +705,7 @@
 
     .intensity-opt {
       flex: 1;
+      min-height: 36px;
       padding: 0.5rem 0.2rem;
       background: rgba(255,255,255,0.05);
       border: 1px solid var(--card-border);
@@ -693,6 +724,7 @@
 
     .close-settings-btn {
       width: 100%;
+      min-height: 46px;
       padding: 0.75rem;
       background: rgba(255,255,255,0.08);
       border: 1px solid var(--card-border);
@@ -706,7 +738,7 @@
       background: var(--bg-panel);
       border: 1px solid var(--card-border);
       border-radius: 24px;
-      padding: 1.5rem 1rem;
+      padding: 1.4rem 0.9rem 1.2rem;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -721,7 +753,7 @@
     }
 
     .bpm-value-text {
-      font-size: 3.5rem;
+      font-size: clamp(2.5rem, 8vw, 3.5rem);
       font-weight: 800;
       line-height: 1;
       color: var(--brand-mint);
@@ -743,10 +775,12 @@
       width: 100%;
       max-width: 300px;
       margin-bottom: 1rem;
+      flex-wrap: wrap;
     }
 
     .bpm-preset-btn {
-      flex: 1;
+      flex: 1 1 52px;
+      min-height: 36px;
       padding: 0.4rem 0.2rem;
       background: rgba(255,255,255,0.04);
       border: 1px solid var(--card-border);
@@ -776,16 +810,17 @@
       background: rgba(255,255,255,0.05);
       border: 1px solid var(--card-border);
       color: var(--text-main);
-      font-size: 1.2rem;
+      font-size: 1.15rem;
       font-weight: 800;
       border-radius: 14px;
-      padding: 0.85rem 0;
+      padding: 0.8rem 0;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
       user-select: none;
       transition: all 0.15s ease;
+      min-height: 52px;
     }
 
     .keypad-btn:active {
@@ -814,6 +849,7 @@
 
     .knob-play-btn {
       flex: 1;
+      min-height: 48px;
       background: var(--brand-mint);
       color: #000;
       border: none;
@@ -842,6 +878,7 @@
 
     .mode-btn {
       flex: 1;
+      min-height: 42px;
       padding: 0.6rem 0.4rem;
       background: rgba(255,255,255,0.04);
       border: 1px solid var(--card-border);
@@ -873,7 +910,7 @@
     }
 
     .tuner-note-display {
-      font-size: 5rem;
+      font-size: clamp(3.2rem, 15vw, 5rem);
       font-weight: 800;
       line-height: 1;
       color: var(--brand-mint);
@@ -924,7 +961,7 @@
       border-radius: 4px;
       left: 50%;
       transform: translateX(-50%);
-      transition: left 0.1s ease-out, background-color 0.2s;
+      transition: left 0.12s ease-out, background-color 0.2s;
       z-index: 3;
     }
 
@@ -956,12 +993,13 @@
       font-size: 1rem;
       font-weight: 800;
       border-radius: 16px;
-      padding: 0.85rem 2rem;
+      padding: 0.9rem 2rem;
       cursor: pointer;
       box-shadow: 0 6px 20px var(--brand-mint-glow);
       transition: all 0.2s ease;
       width: 100%;
       max-width: 280px;
+      min-height: 48px;
     }
 
     .tuner-start-btn.active {
@@ -975,6 +1013,49 @@
       color: var(--text-muted);
       padding: 1rem 0;
       font-size: 0.9rem;
+    }
+
+    @media (max-width: 380px) {
+      header {
+        gap: 0.55rem;
+      }
+
+      .header-left {
+        gap: 0.5rem;
+      }
+
+      .logo-container {
+        padding: 4px 7px;
+      }
+
+      .app-logo {
+        height: 30px;
+      }
+
+      header h1 {
+        font-size: 0.66rem;
+      }
+
+      nav {
+        gap: 0.25rem;
+      }
+
+      nav button {
+        font-size: 0.675rem;
+        min-height: 54px;
+      }
+
+      .song-card {
+        padding: 0.8rem 0.8rem 0.7rem;
+      }
+
+      .song-links {
+        gap: 0.3rem;
+      }
+
+      .format-btn {
+        min-width: 64px;
+      }
     }
   </style>
 </head>
