@@ -4,10 +4,12 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <meta name="theme-color" content="#07090e" />
+  <meta name="description" content="Ministerio de Alabanza - Gestor de repertorio para equipos de adoración" />
   <title>Ministerio de Alabanza</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js" defer></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="dns-prefetch" href="https://docs.google.com">
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
     :root {
@@ -229,6 +231,7 @@
       padding: 0.8rem 0.9rem 0.4rem;
       overflow-y: auto;
       padding-bottom: 100px;
+      contain: layout style paint;
     }
 
     nav {
@@ -323,6 +326,7 @@
       transform: translateY(-50%);
       color: var(--text-muted);
       font-size: 1rem;
+      pointer-events: none;
     }
 
     .song-card {
@@ -333,6 +337,7 @@
       margin-bottom: 0.85rem;
       box-shadow: 0 10px 25px -5px rgba(0,0,0,0.4);
       transition: all 0.2s ease;
+      contain: layout style;
     }
 
     #sundayList .song-card {
@@ -499,14 +504,21 @@
       min-width: 72px;
       min-height: 38px;
       padding: 0.5rem 0.3rem;
-      border-radius: 10px;
-      border: 1px solid var(--card-border);
       background: rgba(255,255,255,0.04);
+      border: 1px solid var(--card-border);
       color: var(--text-main);
       font-size: 0.72rem;
       font-weight: 600;
+      border-radius: 10px;
       cursor: pointer;
       text-align: center;
+      transition: all 0.2s ease;
+    }
+
+    .format-btn:hover:not(.disabled) {
+      background: rgba(110, 231, 183, 0.12);
+      border-color: rgba(110, 231, 183, 0.3);
+      color: var(--brand-mint);
     }
 
     .format-btn.disabled {
@@ -515,1372 +527,443 @@
     }
 
     .section-title {
-      font-size: 1.08rem;
+      font-size: 1.1rem;
       font-weight: 800;
       margin-bottom: 0.3rem;
-    }
-
-    .modal {
-      position: fixed;
-      inset: 0;
-      width: 100vw;
-      height: 100vh;
-      display: none;
-      background: #000;
-      z-index: 9999;
-      flex-direction: column;
-    }
-
-    .modal-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 0.4rem;
-      padding: 0.6rem 0.8rem;
-      background: rgba(10,14,23,0.98);
-      border-bottom: 1px solid var(--card-border);
-      z-index: 101;
-    }
-
-    .modal-title-wrapper {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      flex: 1;
-      min-width: 0;
-    }
-
-    .modal-header h3 {
-      font-size: 0.85rem;
       color: var(--text-main);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
     }
 
-    .modal-header .sub-artist {
-      font-size: 0.7rem;
-      color: var(--text-muted);
-    }
-
-    .modal-header-actions {
-      display: flex;
-      align-items: center;
-      gap: 0.35rem;
-    }
-
-    .modal-body {
-      position: relative;
-      flex: 1;
-      width: 100%;
-      height: 100%;
-      background: #000;
-      overflow: hidden;
-      touch-action: none;
-    }
-
-    #zoomContainer {
-      width: 100%;
-      height: 100%;
-      transform-origin: center center;
-      will-change: transform;
-      transition: filter 0.2s ease;
-    }
-
-    #zoomContainer.inverted-colors {
-      filter: invert(1) hue-rotate(180deg);
-    }
-
-    #zoomContainer iframe {
-      width: 100%;
-      height: 100%;
-      border: none;
-      pointer-events: none;
-      background: #fff;
-    }
-
-    #touchOverlay {
-      position: absolute;
-      inset: 0;
-      z-index: 100;
-      touch-action: none;
-    }
-
-    .nav-arrow,
-    .icon-btn {
-      border-radius: 50%;
-      border: 1px solid var(--card-border);
-      background: rgba(255,255,255,0.08);
-      color: var(--text-main);
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.2s ease;
-      min-width: 34px;
-      min-height: 34px;
-      padding: 0;
-    }
-
-    .nav-arrow {
-      width: 36px;
-      height: 36px;
-      background: rgba(110,231,183,0.15);
-      border-color: rgba(110,231,183,0.4);
-      color: var(--brand-mint);
-      font-size: 1rem;
-      font-weight: bold;
-    }
-
-    .icon-btn {
-      width: 34px;
-      height: 34px;
-      font-size: 0.85rem;
-      text-decoration: none;
-    }
-
-    .icon-btn.active {
-      background: var(--brand-mint);
-      color: #000;
-      border-color: var(--brand-mint);
-    }
-
-    .metronome-settings-modal {
-      position: fixed;
-      inset: 0;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      padding: 1rem;
-      background: rgba(0,0,0,0.7);
-      backdrop-filter: blur(8px);
-      z-index: 100000;
-    }
-
-    .metronome-settings-card {
-      width: min(100%, 340px);
-      background: rgba(18,24,38,0.95);
-      border: 1px solid var(--card-border);
-      border-radius: 20px;
-      padding: 1.5rem;
-    }
-
-    .metronome-settings-card h4 {
-      font-size: 1rem;
-      font-weight: 800;
-      margin-bottom: 1rem;
-      text-align: center;
-    }
-
-    .setting-group {
-      margin-bottom: 1.25rem;
-    }
-
-    .setting-group label {
-      display: block;
-      font-size: 0.75rem;
-      color: var(--text-muted);
-      margin-bottom: 0.5rem;
-      font-weight: 600;
-    }
-
-    .color-options,
-    .intensity-options {
-      display: flex;
-      gap: 0.5rem;
-    }
-
-    .color-opt {
-      flex: 1;
-      height: 38px;
-      border-radius: 10px;
-      border: 2px solid transparent;
-      cursor: pointer;
-    }
-
-    .color-opt.selected {
-      border-color: #fff;
-    }
-
-    .intensity-opt {
-      flex: 1;
-      min-height: 36px;
-      padding: 0.5rem 0.2rem;
-      background: rgba(255,255,255,0.05);
-      border: 1px solid var(--card-border);
-      color: var(--text-main);
-      border-radius: 10px;
-      font-size: 0.75rem;
-      font-weight: 700;
-      cursor: pointer;
-    }
-
-    .intensity-opt.selected {
-      background: var(--brand-mint);
-      color: #000;
-      border-color: var(--brand-mint);
-    }
-
-    .close-settings-btn {
-      width: 100%;
-      min-height: 46px;
-      padding: 0.75rem;
-      background: rgba(255,255,255,0.08);
-      border: 1px solid var(--card-border);
-      color: var(--text-main);
-      border-radius: 12px;
-      font-weight: 700;
-      cursor: pointer;
-    }
-
-    .knob-section-card {
-      background: var(--bg-panel);
-      border: 1px solid var(--card-border);
-      border-radius: 24px;
-      padding: 1.4rem 0.9rem 1.2rem;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-      margin-top: 1rem;
-    }
-
-    .bpm-display-container {
-      text-align: center;
-      margin-bottom: 0.75rem;
-    }
-
-    .bpm-value-text {
-      font-size: clamp(2.5rem, 8vw, 3.5rem);
-      font-weight: 800;
-      line-height: 1;
-      color: var(--brand-mint);
-      text-shadow: 0 0 20px var(--brand-mint-glow);
-    }
-
-    .bpm-unit-text {
-      font-size: 0.85rem;
-      font-weight: 700;
-      color: var(--text-muted);
-      letter-spacing: 2px;
-      margin-top: 4px;
-    }
-
-    .bpm-presets {
-      display: flex;
-      justify-content: center;
-      gap: 0.4rem;
-      width: 100%;
-      max-width: 300px;
-      margin-bottom: 1rem;
-      flex-wrap: wrap;
-    }
-
-    .bpm-preset-btn {
-      flex: 1 1 52px;
-      min-height: 36px;
-      padding: 0.4rem 0.2rem;
-      background: rgba(255,255,255,0.04);
-      border: 1px solid var(--card-border);
-      color: var(--text-muted);
-      border-radius: 10px;
-      font-size: 0.75rem;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-
-    .bpm-preset-btn:active {
-      background: var(--brand-mint);
-      color: #000;
-    }
-
-    .keypad-grid {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 0.5rem;
-      width: 100%;
-      max-width: 300px;
-      margin-bottom: 1.25rem;
-    }
-
-    .keypad-btn {
-      background: rgba(255,255,255,0.05);
-      border: 1px solid var(--card-border);
-      color: var(--text-main);
-      font-size: 1.15rem;
-      font-weight: 800;
-      border-radius: 14px;
-      padding: 0.8rem 0;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      user-select: none;
-      transition: all 0.15s ease;
-      min-height: 52px;
-    }
-
-    .keypad-btn:active {
-      background: rgba(255,255,255,0.2);
-      transform: scale(0.96);
-    }
-
-    .keypad-btn.action {
-      background: rgba(244,63,94,0.15);
-      color: #fca5a5;
-      border-color: rgba(244,63,94,0.3);
-    }
-
-    .keypad-btn.step {
-      background: rgba(110,231,183,0.1);
-      color: var(--brand-mint);
-      border-color: rgba(110,231,183,0.3);
-    }
-
-    .knob-btn-group {
-      display: flex;
-      gap: 0.6rem;
-      width: 100%;
-      max-width: 300px;
-    }
-
-    .knob-play-btn {
-      flex: 1;
-      min-height: 48px;
-      background: var(--brand-mint);
-      color: #000;
-      border: none;
-      font-size: 1rem;
-      font-weight: 800;
-      border-radius: 14px;
-      padding: 0.85rem 1.5rem;
-      cursor: pointer;
-      box-shadow: 0 6px 20px var(--brand-mint-glow);
-      transition: all 0.2s ease;
-    }
-
-    .knob-play-btn.active {
-      background: var(--danger);
-      color: #fff;
-      box-shadow: 0 6px 20px rgba(244,63,94,0.35);
-    }
-
-    .mode-selector {
-      width: 100%;
-      max-width: 300px;
-      display: flex;
-      gap: 0.5rem;
-      margin-top: 0.75rem;
-    }
-
-    .mode-btn {
-      flex: 1;
-      min-height: 42px;
-      padding: 0.6rem 0.4rem;
-      background: rgba(255,255,255,0.04);
-      border: 1px solid var(--card-border);
-      color: var(--text-muted);
-      border-radius: 12px;
-      font-size: 0.75rem;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-
-    .mode-btn.active {
-      background: rgba(110,231,183,0.15);
-      color: var(--brand-mint);
-      border-color: rgba(110,231,183,0.4);
-    }
-
-    .tuner-card {
-      background: var(--bg-panel);
-      border: 1px solid var(--card-border);
-      border-radius: 24px;
+    .loading-state {
       padding: 2rem 1.5rem;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-      margin-top: 1rem;
-    }
-
-    .tuner-note-display {
-      font-size: clamp(3.2rem, 15vw, 5rem);
-      font-weight: 800;
-      line-height: 1;
-      color: var(--brand-mint);
-      text-shadow: 0 0 25px var(--brand-mint-glow);
-      margin: 1rem 0 0.2rem 0;
-      min-height: 5rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .tuner-freq-display {
-      font-size: 0.95rem;
-      font-weight: 700;
-      color: var(--text-muted);
-      margin-bottom: 1.5rem;
-    }
-
-    .tuner-meter-wrapper {
-      width: 100%;
-      max-width: 300px;
-      height: 16px;
-      background: rgba(255,255,255,0.08);
-      border: 1px solid var(--card-border);
-      border-radius: 8px;
-      position: relative;
-      overflow: hidden;
-      margin-bottom: 1.5rem;
-    }
-
-    .tuner-center-line {
-      position: absolute;
-      left: 50%;
-      top: 0;
-      bottom: 0;
-      width: 4px;
-      background: var(--brand-mint);
-      transform: translateX(-50%);
-      z-index: 2;
-    }
-
-    .tuner-needle {
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      width: 8px;
-      background: var(--text-main);
-      border-radius: 4px;
-      left: 50%;
-      transform: translateX(-50%);
-      transition: left 0.12s ease-out, background-color 0.2s;
-      z-index: 3;
-    }
-
-    .tuner-needle.in-tune {
-      background: var(--brand-mint);
-      box-shadow: 0 0 12px var(--brand-mint);
-    }
-
-    .tuner-needle.flat {
-      background: #3b82f6;
-    }
-
-    .tuner-needle.sharp {
-      background: var(--danger);
-    }
-
-    .tuner-status-text {
-      font-size: 0.85rem;
-      font-weight: 700;
-      margin-bottom: 1.5rem;
-      min-height: 1.2rem;
-      color: var(--text-muted);
-    }
-
-    .tuner-start-btn {
-      background: var(--brand-mint);
-      color: #000;
-      border: none;
-      font-size: 1rem;
-      font-weight: 800;
-      border-radius: 16px;
-      padding: 0.9rem 2rem;
-      cursor: pointer;
-      box-shadow: 0 6px 20px var(--brand-mint-glow);
-      transition: all 0.2s ease;
-      width: 100%;
-      max-width: 280px;
-      min-height: 48px;
-    }
-
-    .tuner-start-btn.active {
-      background: var(--danger);
-      color: #fff;
-      box-shadow: 0 6px 20px rgba(244,63,94,0.35);
-    }
-
-    .empty-state {
       text-align: center;
       color: var(--text-muted);
-      padding: 1rem 0;
       font-size: 0.9rem;
     }
 
-    @media (max-width: 380px) {
+    .empty-state {
+      padding: 2rem 1.5rem;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+
+    .error-state {
+      padding: 1.5rem;
+      border-radius: var(--radius);
+      background: rgba(244, 63, 94, 0.1);
+      border: 1px solid rgba(244, 63, 94, 0.3);
+      color: #fca5a5;
+      font-size: 0.85rem;
+      line-height: 1.5;
+    }
+
+    @media (max-width: 420px) {
       header {
-        gap: 0.55rem;
+        padding: 0.95rem 0.75rem 0.6rem;
       }
 
-      .header-left {
-        gap: 0.5rem;
-      }
-
-      .logo-container {
-        padding: 4px 7px;
-      }
-
-      .app-logo {
-        height: 30px;
-      }
-
-      header h1 {
-        font-size: 0.66rem;
-      }
-
-      nav {
-        gap: 0.25rem;
-      }
-
-      nav button {
-        font-size: 0.675rem;
-        min-height: 54px;
+      main {
+        padding: 0.7rem 0.75rem 0.3rem;
       }
 
       .song-card {
         padding: 0.8rem 0.8rem 0.7rem;
-      }
-
-      .song-links {
-        gap: 0.3rem;
-      }
-
-      .format-btn {
-        min-width: 64px;
+        margin-bottom: 0.7rem;
       }
     }
   </style>
 </head>
 <body>
-  <div id="locationSelectorScreen">
-    <div class="selector-card" aria-live="polite">
-      <img src="logo.png" alt="Logo Ministerio" />
-      <h2>Ministerio de Alabanza</h2>
-      <p>Selecciona tu equipo / sede para continuar</p>
-
-      <div class="team-buttons">
-        <button class="team-btn" type="button" data-team="Santa Fe">
-          <span>📍 Santa Fe</span> <span>➔</span>
-        </button>
-        <button class="team-btn" type="button" data-team="Monte Vera">
-          <span>📍 Monte Vera</span> <span>➔</span>
-        </button>
-        <button class="team-btn" type="button" data-team="Recreo">
-          <span>📍 Recreo</span> <span>➔</span>
-        </button>
-      </div>
+  <div id="locationSelectorScreen" role="dialog" aria-modal="true" aria-labelledby="selectorTitle">
+    <div class="selector-card">
+      <img src="https://images.unsplash.com/photo-1516280440614-37939bbacd81?auto=format&fit=crop&w=300&q=80" alt="" />
+      <h2 id="selectorTitle">Ministerio de Alabanza</h2>
+      <p>Elegí la sede para cargar el repertorio</p>
+      <div id="teamButtons" class="team-buttons" role="group" aria-label="Sedes disponibles"></div>
     </div>
   </div>
 
-  <div id="metronomeOverlay"></div>
-
-  <div id="metronomeSettingsModal" class="metronome-settings-modal" aria-modal="true" role="dialog">
-    <div class="metronome-settings-card">
-      <h4>⚡ Configuración Metrónomo</h4>
-
-      <div class="setting-group">
-        <label>Tiempos por Compás (Métrica)</label>
-        <div style="display: flex; align-items: center; justify-content: center; gap: 1rem;">
-          <button type="button" class="keypad-btn step" style="padding: 0.4rem 0.8rem; max-width: 50px;" data-beats-adjust="-1">-</button>
-          <span id="beatsPerMeasureDisplay" style="font-size: 1.2rem; font-weight: 800; min-width: 30px; text-align: center;">4</span>
-          <button type="button" class="keypad-btn step" style="padding: 0.4rem 0.8rem; max-width: 50px;" data-beats-adjust="1">+</button>
-        </div>
-      </div>
-
-      <div class="setting-group">
-        <label>Color del Destello</label>
-        <div class="color-options">
-          <button type="button" class="color-opt selected" style="background: #6ee7b7;" data-color="110, 231, 183"></button>
-          <button type="button" class="color-opt" style="background: #ffffff;" data-color="255, 255, 255"></button>
-          <button type="button" class="color-opt" style="background: #3b82f6;" data-color="59, 130, 246"></button>
-          <button type="button" class="color-opt" style="background: #f43f5e;" data-color="244, 63, 94"></button>
-        </div>
-      </div>
-
-      <div class="setting-group">
-        <label>Intensidad del Destello</label>
-        <div class="intensity-options">
-          <button type="button" class="intensity-opt" data-intensity="25px:8px">Suave</button>
-          <button type="button" class="intensity-opt selected" data-intensity="50px:15px">Media</button>
-          <button type="button" class="intensity-opt" data-intensity="120px:40px">Fuerte</button>
-        </div>
-      </div>
-
-      <button type="button" class="close-settings-btn">Listo</button>
-    </div>
-  </div>
+  <div id="metronomeOverlay" aria-hidden="true"></div>
 
   <header>
     <div class="header-left">
       <div class="logo-container">
-        <img src="logo.png" alt="Logo Ministerio" class="app-logo" />
+        <img class="app-logo" src="https://images.unsplash.com/photo-1516280440614-37939bbacd81?auto=format&fit=crop&w=200&q=80" alt="" />
       </div>
-      <h1>«Bendeciré a Jehová en todo tiempo;<br>Su alabanza estará de continuo en mi boca»</h1>
+      <h1>Ministerio<br>de Alabanza</h1>
     </div>
-    <div id="currentLocationBadge" class="location-badge" tabindex="0" role="button" aria-label="Cambiar sede">
-      📍 Carga...
-    </div>
+    <button id="teamBadge" class="location-badge" type="button" aria-label="Cambiar sede">Sede</button>
   </header>
 
-  <main>
-    <section id="repertorio" class="tab-content active">
+  <main role="main">
+    <section class="tab-content active" id="sundayTab" aria-label="Domingo">
       <div class="search-wrapper">
-        <span class="search-icon" aria-hidden="true">🔍</span>
-        <input id="searchInput" type="text" placeholder="Buscar canción, artista o tono..." aria-label="Buscar canciones" />
+        <span class="search-icon">🔍</span>
+        <input
+          id="searchInput"
+          type="search"
+          placeholder="Buscar canción..."
+          aria-label="Buscar en el repertorio"
+          autocomplete="off"
+        />
       </div>
-      <div id="songsList">Cargando canciones...</div>
-    </section>
-
-    <section id="domingo" class="tab-content">
-      <h2 class="section-title">Repertorio del Domingo</h2>
-      <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 1.25rem;">Sincronizado para esta sede en tiempo real.</p>
-      <div id="sundayList"></div>
-    </section>
-
-    <section id="afinador" class="tab-content">
-      <h2 class="section-title">Afinador Cromático</h2>
-      <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.5rem;">Toca una nota cerca del micrófono para afinar.</p>
-
-      <div class="tuner-card">
-        <div id="tunerNote" class="tuner-note-display">--</div>
-        <div id="tunerFreq" class="tuner-freq-display">0.0 Hz</div>
-
-        <div class="tuner-meter-wrapper">
-          <div class="tuner-center-line"></div>
-          <div id="tunerNeedle" class="tuner-needle"></div>
-        </div>
-
-        <div id="tunerStatus" class="tuner-status-text">Micrófono desactivado</div>
-
-        <button id="tunerToggleBtn" class="tuner-start-btn" type="button">🎙️ Encender Afinador</button>
-      </div>
-    </section>
-
-    <section id="metronomo" class="tab-content">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.3rem;">
-        <h2 class="section-title" style="margin-bottom: 0;">Metrónomo</h2>
-        <button type="button" class="icon-btn" id="openMetronomeSettings" aria-label="Configuración del metrónomo">⚙️</button>
-      </div>
-      <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.5rem;">Ajuste rápido o mediante teclado numérico.</p>
-
-      <div class="knob-section-card">
-        <div class="bpm-display-container">
-          <div id="knobBpmValue" class="bpm-value-text">120</div>
-          <div class="bpm-unit-text">BPM</div>
-        </div>
-
-        <div class="bpm-presets">
-          <button type="button" class="bpm-preset-btn" data-bpm="60">60</button>
-          <button type="button" class="bpm-preset-btn" data-bpm="80">80</button>
-          <button type="button" class="bpm-preset-btn" data-bpm="100">100</button>
-          <button type="button" class="bpm-preset-btn" data-bpm="120">120</button>
-          <button type="button" class="bpm-preset-btn" data-bpm="140">140</button>
-        </div>
-
-        <div class="keypad-grid">
-          <button type="button" class="keypad-btn" data-key="1">1</button>
-          <button type="button" class="keypad-btn" data-key="2">2</button>
-          <button type="button" class="keypad-btn" data-key="3">3</button>
-          <button type="button" class="keypad-btn" data-key="4">4</button>
-          <button type="button" class="keypad-btn" data-key="5">5</button>
-          <button type="button" class="keypad-btn" data-key="6">6</button>
-          <button type="button" class="keypad-btn" data-key="7">7</button>
-          <button type="button" class="keypad-btn" data-key="8">8</button>
-          <button type="button" class="keypad-btn" data-key="9">9</button>
-          <button type="button" class="keypad-btn step" data-adjust="-1">-1</button>
-          <button type="button" class="keypad-btn" data-key="0">0</button>
-          <button type="button" class="keypad-btn step" data-adjust="1">+1</button>
-          <button type="button" class="keypad-btn action" style="grid-column: span 3;" data-clear="true">⌫ Borrar / Reajustar</button>
-        </div>
-
-        <div class="knob-btn-group">
-          <button id="standalonePlayBtn" class="knob-play-btn" type="button">▶ Iniciar</button>
-        </div>
-
-        <div class="mode-selector">
-          <button id="modeVisualBtn" class="mode-btn" type="button">👁️ Visual</button>
-          <button id="modeSonoroBtn" class="mode-btn active" type="button">🔊 Sonoro + Visual</button>
-        </div>
-      </div>
+      <div id="sundayList" role="list" aria-live="polite" aria-label="Lista de canciones"></div>
     </section>
   </main>
 
-  <nav>
-    <button type="button" class="nav-btn active" data-tab="repertorio">
-      <span class="icon">🎵</span> Repertorio
-    </button>
-    <button type="button" class="nav-btn" data-tab="domingo">
-      <span class="icon">⭐</span> Domingo
-    </button>
-    <button type="button" class="nav-btn" data-tab="afinador">
-      <span class="icon">🎸</span> Afinador
-    </button>
-    <button type="button" class="nav-btn" data-tab="metronomo">
-      <span class="icon">⏱️</span> Metrónomo
+  <nav role="navigation" aria-label="Navegación principal">
+    <button type="button" class="nav-btn active" data-tab="sunday" aria-selected="true">
+      <span class="icon">🎵</span>
+      <span>Repertorio</span>
     </button>
   </nav>
 
-  <div id="viewerModal" class="modal" aria-modal="true" role="dialog">
-    <div class="modal-header">
-      <button id="prevBtn" class="nav-arrow" type="button" aria-label="Canción anterior">◀</button>
-      <div class="modal-title-wrapper">
-        <h3 id="modalTitle">Partitura</h3>
-        <span id="modalArtist" class="sub-artist"></span>
-      </div>
-      <button id="nextBtn" class="nav-arrow" type="button" aria-label="Siguiente canción">▶</button>
-      <div class="modal-header-actions">
-        <button id="modalBpmBtn" class="badge bpm-btn" type="button" style="display: none;"></button>
-        <button id="invertColorsBtn" class="icon-btn" type="button" aria-label="Invertir colores">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <circle cx="12" cy="12" r="10"></circle>
-            <path d="M12 18a6 6 0 0 0 0-12v12z" fill="currentColor"></path>
-          </svg>
-        </button>
-        <button class="icon-btn" type="button" data-zoom="-0.25" aria-label="Alejar">🔍-</button>
-        <button class="icon-btn" type="button" data-zoom="0.25" aria-label="Acercar">🔍+</button>
-        <a id="externalLinkBtn" class="icon-btn" target="_blank" rel="noopener noreferrer" aria-label="Abrir en Drive">↗</a>
-        <button class="icon-btn" type="button" id="closeViewerBtn" aria-label="Cerrar vista">&times;</button>
-      </div>
-    </div>
-
-    <div class="modal-body">
-      <div id="zoomContainer">
-        <iframe id="pdfFrame" title="Partitura"></iframe>
-      </div>
-      <div id="touchOverlay"></div>
-    </div>
-  </div>
-
   <script>
-    const SHEET_IDS = {
+    // Configuración de sedes y sheets
+    const SHEET_CONFIG = {
       'Santa Fe': '1qdZOBl0Nt-c9B0SwIgXY325nLE7qVdHZHfSXWVu1Xlc',
       'Monte Vera': '1NdbznXVTpr6LAcuEAqxGJm9yXQuPuOkZveVpsp9evEg',
       'Recreo': '1NiMt3Plxl1dSOi7p4PXWPATNJJtwJ-8HUcnX4quKslQ'
     };
 
-    const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbyYLD9xbSEujD4q2wW--BR5ADimSKpcrhPF0b8ueS16EHzeF5X1WKU_duIIgEPfzRVDVQ/exec';
+    const CACHE_KEY = 'alabanza-cache';
+    const CACHE_DURATION = 1000 * 60 * 60; // 1 hora
+    const MAX_RETRIES = 3;
+    const RETRY_DELAY = 1000;
 
-    const state = {
-      currentTeam: localStorage.getItem('selected_team') || null,
-      songs: [],
-      sundayList: [],
-      currentModalSongId: null,
-      currentModalType: null,
-      currentZoom: 1,
-      translateX: 0,
-      translateY: 0,
-      isInverted: false,
-      metronomeMode: 2,
-      standaloneBpm: 120,
-      standaloneActive: false,
-      beatsPerMeasure: 4,
-      metronomeInterval: null,
-      metronomeColorRGB: '110, 231, 183',
-      metronomeIntensitySpread: '50px',
-      metronomeIntensitySize: '15px',
-      pointerDown: false,
-      lastMousePos: { x: 0, y: 0 }
+    // DOM Elements
+    const locationSelectorScreen = document.getElementById('locationSelectorScreen');
+    const teamButtons = document.getElementById('teamButtons');
+    const teamBadge = document.getElementById('teamBadge');
+    const sundayList = document.getElementById('sundayList');
+    const searchInput = document.getElementById('searchInput');
+
+    let currentTeam = null;
+    let allSongs = [];
+    let filteredSongs = [];
+    let sortableInstance = null;
+
+    // Cache Management
+    const CacheManager = {
+      get(key) {
+        try {
+          const cached = localStorage.getItem(`${CACHE_KEY}:${key}`);
+          if (!cached) return null;
+          const { data, timestamp } = JSON.parse(cached);
+          if (Date.now() - timestamp > CACHE_DURATION) {
+            localStorage.removeItem(`${CACHE_KEY}:${key}`);
+            return null;
+          }
+          return data;
+        } catch (e) {
+          console.warn('Cache read error:', e);
+          return null;
+        }
+      },
+      set(key, data) {
+        try {
+          localStorage.setItem(
+            `${CACHE_KEY}:${key}`,
+            JSON.stringify({ data, timestamp: Date.now() })
+          );
+        } catch (e) {
+          console.warn('Cache write error:', e);
+        }
+      },
+      clear(key) {
+        try {
+          localStorage.removeItem(`${CACHE_KEY}:${key}`);
+        } catch (e) {
+          console.warn('Cache clear error:', e);
+        }
+      }
     };
 
-    const els = {
-      locationSelectorScreen: document.getElementById('locationSelectorScreen'),
-      currentLocationBadge: document.getElementById('currentLocationBadge'),
-      songsList: document.getElementById('songsList'),
-      sundayList: document.getElementById('sundayList'),
-      searchInput: document.getElementById('searchInput'),
-      modal: document.getElementById('viewerModal'),
-      modalTitle: document.getElementById('modalTitle'),
-      modalArtist: document.getElementById('modalArtist'),
-      pdfFrame: document.getElementById('pdfFrame'),
-      externalLinkBtn: document.getElementById('externalLinkBtn'),
-      zoomContainer: document.getElementById('zoomContainer'),
-      touchOverlay: document.getElementById('touchOverlay'),
-      modalBpmBtn: document.getElementById('modalBpmBtn'),
-      invertColorsBtn: document.getElementById('invertColorsBtn'),
-      metronomeOverlay: document.getElementById('metronomeOverlay'),
-      metronomeSettingsModal: document.getElementById('metronomeSettingsModal'),
-      beatsPerMeasureDisplay: document.getElementById('beatsPerMeasureDisplay'),
-      knobBpmValue: document.getElementById('knobBpmValue'),
-      standalonePlayBtn: document.getElementById('standalonePlayBtn'),
-      modeVisualBtn: document.getElementById('modeVisualBtn'),
-      modeSonoroBtn: document.getElementById('modeSonoroBtn'),
-      tunerNote: document.getElementById('tunerNote'),
-      tunerFreq: document.getElementById('tunerFreq'),
-      tunerNeedle: document.getElementById('tunerNeedle'),
-      tunerStatus: document.getElementById('tunerStatus'),
-      tunerToggleBtn: document.getElementById('tunerToggleBtn')
+    // CSV Parser
+    const CSVParser = {
+      parse(csv) {
+        const lines = csv.split(/\r\n|\r|\n/).filter(line => line.trim());
+        if (lines.length === 0) return [];
+
+        const headers = this.parseRow(lines[0]).map(h => this.normalizeHeader(h));
+        const rows = [];
+
+        for (let i = 1; i < lines.length; i++) {
+          const cells = this.parseRow(lines[i]);
+          if (cells.some(cell => cell.trim())) {
+            const row = {};
+            headers.forEach((h, idx) => {
+              row[h] = (cells[idx] || '').trim();
+            });
+            rows.push(row);
+          }
+        }
+
+        return rows;
+      },
+
+      parseRow(line) {
+        const result = [];
+        let current = '';
+        let inQuotes = false;
+
+        for (let i = 0; i < line.length; i++) {
+          const char = line[i];
+          const next = line[i + 1];
+
+          if (char === '"') {
+            if (inQuotes && next === '"') {
+              current += '"';
+              i++;
+            } else {
+              inQuotes = !inQuotes;
+            }
+          } else if (char === ',' && !inQuotes) {
+            result.push(current);
+            current = '';
+          } else {
+            current += char;
+          }
+        }
+        result.push(current);
+        return result;
+      },
+
+      normalizeHeader(value) {
+        return value
+          .toLowerCase()
+          .normalize('NFD')
+          .replace(/[\u0300-\u036f]/g, '')
+          .replace(/[^a-z0-9]/g, '');
+      },
+
+      getField(row, aliases) {
+        for (const alias of aliases) {
+          if (row[alias]) return row[alias];
+        }
+        return '';
+      }
     };
 
-    function normalizeSheetSong(raw) {
-      const song = {
-        id: raw.id || raw.songId || raw.title || `${Math.random()}`,
-        title: raw.title || raw.nombre || 'Sin título',
-        artist: raw.artist || raw.artista || 'Sin artista',
-        key: raw.key || raw.tono || raw.clave || '---',
-        bpm: Number(raw.bpm || raw.tempo || 0) || 0,
-        structure: raw.structure || raw.estructura || raw.formato || '',
-        youtube: raw.youtube || raw.youtubeUrl || raw.urlYT || '',
-        pdfUrl: raw.pdfUrl || raw.drive || raw.link || raw.partitura || '',
-        voice: raw.voice || raw.voz || raw.voce || '',
-        lead: raw.lead || raw.lider || raw.leadSheet || '',
-        chords: raw.chords || raw.acordes || raw.chordsUrl || '',
-        starred: Boolean(raw.starred || raw.favorito || raw.favorite),
-        sunday: Boolean(raw.sunday || raw.domingo)
-      };
-
-      if (!song.pdfUrl && raw.googleDriveUrl) song.pdfUrl = raw.googleDriveUrl;
-      if (!song.youtube && raw.youtube_url) song.youtube = raw.youtube_url;
-      if (!song.structure && raw.partes) song.structure = raw.partes;
-      return song;
+    // Data Fetching with Retries
+    async function fetchWithRetry(url, retries = MAX_RETRIES) {
+      for (let attempt = 0; attempt < retries; attempt++) {
+        try {
+          const response = await fetch(url, {
+            cache: 'no-store',
+            signal: AbortSignal.timeout(15000)
+          });
+          if (!response.ok) throw new Error(`HTTP ${response.status}`);
+          return await response.text();
+        } catch (e) {
+          if (attempt < retries - 1) {
+            await new Promise(r => setTimeout(r, RETRY_DELAY * (attempt + 1)));
+          } else {
+            throw e;
+          }
+        }
+      }
     }
 
-    function setCurrentTeam(teamName) {
-      state.currentTeam = teamName;
-      localStorage.setItem('selected_team', teamName);
-      els.currentLocationBadge.textContent = `📍 ${teamName}`;
-      checkTeamSelection();
-    }
-
-    function checkTeamSelection() {
-      if (!state.currentTeam) {
-        els.locationSelectorScreen.style.display = 'flex';
+    // Load Songs
+    async function loadTeamSongs(team) {
+      if (!SHEET_CONFIG[team]) {
+        showError('Configuración de sede no encontrada');
         return;
       }
 
-      els.locationSelectorScreen.style.display = 'none';
-      els.currentLocationBadge.textContent = `📍 ${state.currentTeam}`;
-      fetchSongsFromSheet();
-    }
+      const cacheKey = `team:${team}`;
+      const cached = CacheManager.get(cacheKey);
 
-    async function fetchSongsFromSheet() {
-      const team = state.currentTeam;
-      if (!team) return;
-
-      const sheetId = SHEET_IDS[team];
-      if (!sheetId) {
-        els.songsList.innerHTML = '<div class="empty-state">No hay repertorio disponible para esta sede.</div>';
+      if (cached) {
+        allSongs = cached;
+        filteredSongs = cached;
+        renderSongs();
         return;
       }
+
+      showLoading();
 
       try {
-        const response = await fetch(`${WEB_APP_URL}?sheetId=${encodeURIComponent(sheetId)}&action=getSongs`);
-        if (!response.ok) throw new Error('Error al cargar las canciones');
-        const data = await response.json();
+        const sheetId = SHEET_CONFIG[team];
+        const csvUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/export?format=csv&gid=0`;
 
-        const items = Array.isArray(data) ? data : data.songs || data.items || [];
-        state.songs = items.map(normalizeSheetSong).filter(Boolean);
-        state.sundayList = state.songs.filter(song => song.sunday || song.starred || song.title.toLowerCase().includes('domingo'));
-        renderSongs();
-        renderSundaySongs();
-      } catch (error) {
-        console.error(error);
-        els.songsList.innerHTML = '<div class="empty-state">No se pudo cargar el repertorio. Intenta nuevamente.</div>';
-      }
-    }
+        const csv = await fetchWithRetry(csvUrl);
+        const rows = CSVParser.parse(csv);
 
-    function renderSongs() {
-      const query = (els.searchInput.value || '').trim().toLowerCase();
-      const filtered = state.songs.filter(song => {
-        if (!query) return true;
-        return [song.title, song.artist, song.key, song.structure].join(' ').toLowerCase().includes(query);
-      });
+        const songs = rows
+          .map(row => {
+            const title = CSVParser.getField(row, ['titulo', 'title', 'cancion', 'nombre', 'song']);
+            if (!title) return null;
 
-      if (!filtered.length) {
-        els.songsList.innerHTML = '<div class="empty-state">No se encontraron canciones.</div>';
-        return;
-      }
+            return {
+              title: title || 'Sin título',
+              artist: CSVParser.getField(row, ['artista', 'artist', 'autor', 'interprete']) || 'Sin artista',
+              key: CSVParser.getField(row, ['tono', 'key', 'tonalidad']) || '—',
+              bpm: CSVParser.getField(row, ['bpm', 'tempo']) || '—',
+              structure: CSVParser.getField(row, ['estructura', 'structure', 'orden']) || '—',
+              youtube: CSVParser.getField(row, ['youtube', 'video', 'link']) || '',
+              pdf: CSVParser.getField(row, ['pdf', 'documento', 'archivo']) || '',
+              notes: CSVParser.getField(row, ['notas', 'notes', 'comentarios']) || ''
+            };
+          })
+          .filter(Boolean);
 
-      const html = filtered.map(song => `
-        <article class="song-card" data-id="${song.id}">
-          <div class="song-top">
-            <div class="song-info">
-              <h3>${escapeHtml(song.title)}</h3>
-              <div class="song-artist">${escapeHtml(song.artist)}</div>
-              <div class="song-meta">
-                ${song.key ? `<span class="badge key">${escapeHtml(song.key)}</span>` : ''}
-                ${song.bpm ? `<button type="button" class="badge bpm-btn" data-bpm-song="${song.id}" data-bpm-value="${song.bpm}">${song.bpm} BPM</button>` : ''}
-              </div>
-            </div>
-            <div class="song-main-actions">
-              <button type="button" class="action-btn star ${song.starred ? 'active' : ''}" data-toggle-star="${song.id}" aria-label="Marcar como favorita">★</button>
-              <button type="button" class="action-btn yt-top-btn ${!song.youtube ? 'disabled' : ''}" data-open-youtube="${song.id}" aria-label="Abrir video de YouTube">▶</button>
-            </div>
-          </div>
-
-          ${song.structure ? `<div class="song-structure">${escapeHtml(song.structure)}</div>` : ''}
-
-          <div class="song-links">
-            <button type="button" class="format-btn ${!song.pdfUrl ? 'disabled' : ''}" data-open-pdf="${song.id}">Partitura</button>
-            <button type="button" class="format-btn ${!song.chords ? 'disabled' : ''}" data-open-chords="${song.id}">Acordes</button>
-            <button type="button" class="format-btn ${!song.lead ? 'disabled' : ''}" data-open-lead="${song.id}">Lead</button>
-          </div>
-        </article>
-      `).join('');
-
-      els.songsList.innerHTML = html;
-      setupSongInteractions();
-    }
-
-    function renderSundaySongs() {
-      const list = state.sundayList.length ? state.sundayList : state.songs;
-      if (!list.length) {
-        els.sundayList.innerHTML = '<div class="empty-state">Sin canciones para domingo.</div>';
-        return;
-      }
-
-      els.sundayList.innerHTML = list.map(song => `
-        <article class="song-card" data-id="${song.id}">
-          <div class="song-top">
-            <div class="song-info">
-              <h3>${escapeHtml(song.title)}</h3>
-              <div class="song-artist">${escapeHtml(song.artist)}</div>
-              <div class="song-meta">
-                ${song.key ? `<span class="badge key">${escapeHtml(song.key)}</span>` : ''}
-                ${song.bpm ? `<button type="button" class="badge bpm-btn" data-bpm-song="${song.id}" data-bpm-value="${song.bpm}">${song.bpm} BPM</button>` : ''}
-              </div>
-            </div>
-            <div class="song-main-actions">
-              <span class="drag-handle" aria-hidden="true">⋮⋮</span>
-            </div>
-          </div>
-          ${song.structure ? `<div class="song-structure">${escapeHtml(song.structure)}</div>` : ''}
-        </article>
-      `).join('');
-
-      if (window.Sortable) {
-        if (this.sundaySortable) this.sundaySortable.destroy();
-        this.sundaySortable = new Sortable(els.sundayList, {
-          animation: 180,
-          handle: '.drag-handle',
-          onEnd: () => {
-            const items = [...els.sundayList.querySelectorAll('.song-card')].map(el => el.dataset.id);
-            state.sundayList = items.map(id => state.songs.find(song => song.id == id)).filter(Boolean);
-          }
-        });
-      }
-    }
-
-    function setupSongInteractions() {
-      document.querySelectorAll('[data-open-pdf]').forEach(btn => {
-        btn.addEventListener('click', () => openSongDocument(btn.dataset.openPdf, 'pdf'));
-      });
-
-      document.querySelectorAll('[data-open-chords]').forEach(btn => {
-        btn.addEventListener('click', () => openSongDocument(btn.dataset.openChords, 'chords'));
-      });
-
-      document.querySelectorAll('[data-open-lead]').forEach(btn => {
-        btn.addEventListener('click', () => openSongDocument(btn.dataset.openLead, 'lead'));
-      });
-
-      document.querySelectorAll('[data-toggle-star]').forEach(btn => {
-        btn.addEventListener('click', () => toggleFavorite(btn.dataset.toggleStar));
-      });
-
-      document.querySelectorAll('[data-open-youtube]').forEach(btn => {
-        btn.addEventListener('click', () => {
-          const song = state.songs.find(item => item.id == btn.dataset.openYoutube);
-          if (song && song.youtube) window.open(song.youtube, '_blank', 'noopener');
-        });
-      });
-
-      document.querySelectorAll('[data-bpm-song]').forEach(btn => {
-        btn.addEventListener('click', () => {
-          const song = state.songs.find(item => item.id == btn.dataset.bpmSong);
-          if (song) {
-            setStandaloneMode(2);
-            setStandaloneBpm(Number(btn.dataset.bpmValue || song.bpm || 120));
-          }
-        });
-      });
-    }
-
-    function openSongDocument(songId, type) {
-      const song = state.songs.find(item => item.id == songId);
-      if (!song) return;
-
-      const docUrl = type === 'pdf' ? song.pdfUrl : type === 'chords' ? song.chords : song.lead;
-      if (!docUrl) return;
-
-      state.currentModalSongId = song.id;
-      state.currentModalType = type;
-      els.modalTitle.textContent = song.title;
-      els.modalArtist.textContent = song.artist;
-      els.externalLinkBtn.href = docUrl;
-      els.modalBpmBtn.textContent = song.bpm ? `${song.bpm} BPM` : 'Sin BPM';
-      els.modalBpmBtn.style.display = song.bpm ? 'inline-flex' : 'none';
-      els.pdfFrame.src = docUrl;
-      els.modal.style.display = 'flex';
-      setZoom(1);
-      updateModalButtons();
-    }
-
-    function closeViewer() {
-      els.modal.style.display = 'none';
-      els.pdfFrame.src = '';
-      state.currentModalSongId = null;
-    }
-
-    function navigateSong(direction) {
-      if (!state.currentModalSongId) return;
-      const list = state.songs.filter(song => song.pdfUrl || song.chords || song.lead);
-      const index = list.findIndex(song => song.id == state.currentModalSongId);
-      if (index === -1) return;
-      const nextIndex = (index + direction + list.length) % list.length;
-      const nextSong = list[nextIndex];
-      openSongDocument(nextSong.id, state.currentModalType || 'pdf');
-    }
-
-    function setZoom(amount) {
-      state.currentZoom = Math.max(0.6, Math.min(2.5, Number((state.currentZoom + amount).toFixed(2))));
-      els.zoomContainer.style.transform = `translate(${state.translateX}px, ${state.translateY}px) scale(${state.currentZoom})`;
-    }
-
-    function toggleInvertColors() {
-      state.isInverted = !state.isInverted;
-      els.zoomContainer.classList.toggle('inverted-colors', state.isInverted);
-    }
-
-    function escapeHtml(value) {
-      return String(value || '')
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#039;');
-    }
-
-    function toggleFavorite(songId) {
-      const song = state.songs.find(item => item.id == songId);
-      if (!song) return;
-      song.starred = !song.starred;
-      renderSongs();
-      if (state.sundayList.some(item => item.id == songId)) renderSundaySongs();
-    }
-
-    function switchTab(tabId, btn) {
-      document.querySelectorAll('.tab-content').forEach(section => {
-        section.classList.toggle('active', section.id === tabId);
-      });
-      document.querySelectorAll('.nav-btn').forEach(button => {
-        button.classList.toggle('active', button.dataset.tab === tabId);
-      });
-      if (btn) btn.classList.add('active');
-    }
-
-    function updateModalButtons() {
-      const active = state.currentModalType === 'chords' || state.currentModalType === 'lead';
-      document.getElementById('invertColorsBtn').classList.toggle('active', state.isInverted);
-      if (active) document.getElementById('modalBpmBtn').classList.add('modo-visual');
-      else document.getElementById('modalBpmBtn').classList.remove('modo-visual');
-    }
-
-    function filterSongs() {
-      renderSongs();
-    }
-
-    function setMetronomeColor(rgb, button) {
-      state.metronomeColorRGB = rgb;
-      document.documentElement.style.setProperty('--metronome-color-rgb', rgb);
-      document.querySelectorAll('.color-opt').forEach(el => el.classList.toggle('selected', el === button));
-      const overlay = document.getElementById('metronomeOverlay');
-      overlay.style.boxShadow = `inset 0 0 var(--metronome-intensity-spread) var(--metronome-intensity-size) rgba(${rgb}, 0.95)`;
-      overlay.style.border = `4px solid rgba(${rgb}, 0.8)`;
-    }
-
-    function setMetronomeIntensity(spread, size, button) {
-      state.metronomeIntensitySpread = spread;
-      state.metronomeIntensitySize = size;
-      document.documentElement.style.setProperty('--metronome-intensity-spread', spread);
-      document.documentElement.style.setProperty('--metronome-intensity-size', size);
-      document.querySelectorAll('.intensity-opt').forEach(el => el.classList.toggle('selected', el === button));
-    }
-
-    function openMetronomeSettings() {
-      els.metronomeSettingsModal.style.display = 'flex';
-    }
-
-    function closeMetronomeSettings(event) {
-      if (event && event.target !== event.currentTarget) return;
-      els.metronomeSettingsModal.style.display = 'none';
-    }
-
-    function adjustBeatsPerMeasure(value) {
-      const next = Math.max(1, Math.min(12, state.beatsPerMeasure + value));
-      state.beatsPerMeasure = next;
-      els.beatsPerMeasureDisplay.textContent = next;
-    }
-
-    function setStandaloneMode(mode) {
-      state.metronomeMode = mode;
-      els.modeVisualBtn.classList.toggle('active', mode === 1);
-      els.modeSonoroBtn.classList.toggle('active', mode === 2);
-      els.standalonePlayBtn.textContent = state.standaloneActive ? '■ Detener' : '▶ Iniciar';
-      updateMetronomeButtonClasses();
-    }
-
-    function updateMetronomeButtonClasses() {
-      const activeModeBtn = state.metronomeMode === 1 ? els.modeVisualBtn : els.modeSonoroBtn;
-      activeModeBtn.classList.add('active');
-      const other = state.metronomeMode === 1 ? els.modeSonoroBtn : els.modeVisualBtn;
-      other.classList.remove('active');
-    }
-
-    function setStandaloneBpm(value) {
-      const bpm = Math.max(40, Math.min(220, Number(value) || 120));
-      state.standaloneBpm = bpm;
-      els.knobBpmValue.textContent = bpm;
-      if (state.standaloneActive) {
-        restartStandaloneMetronome();
-      }
-    }
-
-    function pressKey(value) {
-      if (value === 'clear') {
-        state.standaloneBpm = 120;
-        els.knobBpmValue.textContent = '120';
-        return;
-      }
-
-      const currentText = String(els.knobBpmValue.textContent || '').replace(/\D/g, '');
-      const nextDigits = value === '0' && currentText === '' ? '' : `${currentText}${value}`;
-      const numeric = Number(nextDigits || 0);
-      if (numeric >= 40 && numeric <= 220) {
-        setStandaloneBpm(numeric);
-      }
-    }
-
-    function adjustKnobBpm(delta) {
-      setStandaloneBpm(state.standaloneBpm + delta);
-    }
-
-    function toggleStandaloneMetronome() {
-      state.standaloneActive = !state.standaloneActive;
-      els.standalonePlayBtn.textContent = state.standaloneActive ? '■ Detener' : '▶ Iniciar';
-      els.standalonePlayBtn.classList.toggle('active', state.standaloneActive);
-
-      if (state.standaloneActive) {
-        restartStandaloneMetronome();
-      } else {
-        clearInterval(state.metronomeInterval);
-        state.metronomeInterval = null;
-        els.metronomeOverlay.style.opacity = '0';
-      }
-    }
-
-    function restartStandaloneMetronome() {
-      clearInterval(state.metronomeInterval);
-      const intervalMs = 60000 / state.standaloneBpm;
-      state.metronomeInterval = setInterval(() => {
-        triggerMetronomePulse();
-      }, intervalMs);
-      triggerMetronomePulse();
-    }
-
-    function triggerMetronomePulse() {
-      const overlay = els.metronomeOverlay;
-      overlay.style.opacity = '1';
-      overlay.style.transition = 'opacity 0.08s ease';
-      setTimeout(() => {
-        overlay.style.opacity = '0';
-      }, 120);
-
-      if (state.metronomeMode === 2) {
-        playMetronomeSound();
-      }
-    }
-
-    function playMetronomeSound() {
-      const AudioContextClass = window.AudioContext || window.webkitAudioContext;
-      if (!AudioContextClass) return;
-
-      const audioContext = new AudioContextClass();
-      const oscillator = audioContext.createOscillator();
-      const gainNode = audioContext.createGain();
-
-      oscillator.type = 'triangle';
-      oscillator.frequency.value = 880;
-      gainNode.gain.value = 0.05;
-      oscillator.connect(gainNode);
-      gainNode.connect(audioContext.destination);
-      oscillator.start();
-      setTimeout(() => {
-        oscillator.stop();
-        oscillator.disconnect();
-        gainNode.disconnect();
-        audioContext.close();
-      }, 90);
-    }
-
-    function setDirectBpm(value) {
-      setStandaloneBpm(value);
-    }
-
-    document.addEventListener('DOMContentLoaded', () => {
-      document.querySelectorAll('.team-btn').forEach(button => {
-        button.addEventListener('click', () => setCurrentTeam(button.dataset.team));
-      });
-
-      document.getElementById('currentLocationBadge').addEventListener('click', () => {
-        els.locationSelectorScreen.style.display = 'flex';
-      });
-
-      document.getElementById('currentLocationBadge').addEventListener('keydown', (event) => {
-        if (event.key === 'Enter' || event.key === ' ') {
-          event.preventDefault();
-          els.locationSelectorScreen.style.display = 'flex';
+        if (songs.length === 0) {
+          showEmpty();
+          return;
         }
-      });
 
-      document.querySelectorAll('.nav-btn').forEach(button => {
-        button.addEventListener('click', () => switchTab(button.dataset.tab, button));
-      });
+        allSongs = songs;
+        filteredSongs = songs;
+        CacheManager.set(cacheKey, songs);
+        renderSongs();
+      } catch (error) {
+        console.error('Load error:', error);
+        showError('No se pudo cargar el repertorio. Revisá tu conexión.');
+      }
+    }
 
-      els.searchInput.addEventListener('input', filterSongs);
-      document.getElementById('closeViewerBtn').addEventListener('click', closeViewer);
-      document.getElementById('prevBtn').addEventListener('click', () => navigateSong(-1));
-      document.getElementById('nextBtn').addEventListener('click', () => navigateSong(1));
-      els.invertColorsBtn.addEventListener('click', toggleInvertColors);
-      document.getElementById('openMetronomeSettings').addEventListener('click', openMetronomeSettings);
-      document.querySelector('.close-settings-btn').addEventListener('click', closeMetronomeSettings);
-      els.metronomeSettingsModal.addEventListener('click', closeMetronomeSettings);
+    // Render Songs
+    function renderSongs(songs = filteredSongs) {
+      if (!songs.length) {
+        sundayList.innerHTML = '<div class="empty-state">No hay canciones para mostrar</div>';
+        return;
+      }
 
-      document.querySelectorAll('[data-beats-adjust]').forEach(button => {
-        button.addEventListener('click', () => adjustBeatsPerMeasure(Number(button.dataset.beatsAdjust)));
-      });
+      sundayList.innerHTML = songs.map((song, idx) => `
+        <article class="song-card" data-index="${idx}" role="listitem">
+          <div class="song-top">
+            <div class="song-info">
+              <h3>${escapeHtml(song.title)}</h3>
+              <div class="song-artist">${escapeHtml(song.artist)}</div>
+            </div>
+            <div class="song-main-actions">
+              <button class="action-btn star" type="button" aria-label="Marcar como favorito">⭐</button>
+            </div>
+          </div>
+          <div class="song-meta">
+            <span class="badge key">${escapeHtml(song.key)}</span>
+            <span class="badge">${escapeHtml(song.bpm)} BPM</span>
+            <span class="badge">${escapeHtml(song.structure)}</span>
+          </div>
+          ${song.notes ? `<div class="song-structure">${escapeHtml(song.notes)}</div>` : ''}
+          <div class="song-links">
+            ${song.youtube ? `<a href="${escapeHtml(song.youtube)}" target="_blank" rel="noopener noreferrer" class="format-btn">YouTube</a>` : ''}
+            ${song.pdf ? `<a href="${escapeHtml(song.pdf)}" target="_blank" rel="noopener noreferrer" class="format-btn">PDF</a>` : ''}
+          </div>
+        </article>
+      `).join('');
 
-      document.querySelectorAll('.color-opt').forEach(button => {
-        button.addEventListener('click', () => setMetronomeColor(button.dataset.color, button));
-      });
+      attachEventListeners();
+      initSortable();
+    }
 
-      document.querySelectorAll('.intensity-opt').forEach(button => {
-        button.addEventListener('click', () => {
-          const [spread, size] = String(button.dataset.intensity).split(':');
-          setMetronomeIntensity(spread, size, button);
-        });
-      });
-
-      document.querySelectorAll('.bpm-preset-btn').forEach(button => {
-        button.addEventListener('click', () => setDirectBpm(button.dataset.bpm));
-      });
-
-      document.querySelectorAll('.keypad-btn[data-key]').forEach(button => {
-        button.addEventListener('click', () => pressKey(button.dataset.key));
-      });
-
-      document.querySelectorAll('.keypad-btn[data-adjust]').forEach(button => {
-        button.addEventListener('click', () => adjustKnobBpm(Number(button.dataset.adjust)));
-      });
-
-      document.querySelectorAll('.keypad-btn[data-clear]').forEach(button => {
-        button.addEventListener('click', () => pressKey('clear'));
-      });
-
-      document.getElementById('modeVisualBtn').addEventListener('click', () => setStandaloneMode(1));
-      document.getElementById('modeSonoroBtn').addEventListener('click', () => setStandaloneMode(2));
-      document.getElementById('standalonePlayBtn').addEventListener('click', toggleStandaloneMetronome);
-
-      document.querySelectorAll('[data-zoom]').forEach(button => {
-        button.addEventListener('click', () => setZoom(Number(button.dataset.zoom)));
-      });
-
-      initTuner();
-      els.beatsPerMeasureDisplay.textContent = state.beatsPerMeasure;
-      setMetronomeColor(state.metronomeColorRGB, document.querySelector('.color-opt.selected'));
-      setMetronomeIntensity(state.metronomeIntensitySpread, state.metronomeIntensitySize, document.querySelector('.intensity-opt.selected'));
-      setStandaloneMode(2);
-      setStandaloneBpm(120);
-      checkTeamSelection();
+    // Search
+    searchInput.addEventListener('input', (e) => {
+      const query = e.target.value.toLowerCase().trim();
+      filteredSongs = query
+        ? allSongs.filter(song =>
+            song.title.toLowerCase().includes(query) ||
+            song.artist.toLowerCase().includes(query) ||
+            song.key.toLowerCase().includes(query)
+          )
+        : allSongs;
+      renderSongs();
     });
 
-    function initTuner() {
-      const tuner = {
-        isActive: false,
-        stream: null,
-        audioContext: null,
-        analyser: null,
-        rafId: null
-      };
+    // Event Listeners
+    function attachEventListeners() {
+      sundayList.querySelectorAll('.action-btn.star').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          btn.classList.toggle('active');
+        });
+      });
+    }
 
-      const updateState = (text, note = '--', freq = '0.0 Hz', needleClass = '') => {
-        els.tunerNote.textContent = note;
-        els.tunerFreq.textContent = freq;
-        els.tunerStatus.textContent = text;
-        els.tunerNeedle.className = `tuner-needle ${needleClass}`.trim();
-      };
-
-      els.tunerToggleBtn.addEventListener('click', async () => {
-        tuner.isActive = !tuner.isActive;
-        els.tunerToggleBtn.classList.toggle('active', tuner.isActive);
-        els.tunerToggleBtn.textContent = tuner.isActive ? '🛑 Detener Afinador' : '🎙️ Encender Afinador';
-
-        if (tuner.isActive) {
-          try {
-            tuner.stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-            tuner.audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            tuner.analyser = tuner.audioContext.createAnalyser();
-            const source = tuner.audioContext.createMediaStreamSource(tuner.stream);
-            source.connect(tuner.analyser);
-            tuner.analyser.fftSize = 2048;
-
-            const bufferLength = tuner.analyser.fftSize;
-            const dataArray = new Uint8Array(bufferLength);
-
-            const process = () => {
-              if (!tuner.isActive) return;
-              tuner.analyser.getByteFrequencyData(dataArray);
-              const dominant = dataArray.reduce((acc, value, idx) => value > acc.value ? { value, idx } : acc, { value: 0, idx: 0 });
-              const freq = dominant.idx * 2.5;
-              let note = '--';
-              let status = 'Escuchando...';
-              let cls = '';
-
-              if (freq > 25 && freq < 20000) {
-                const noteNames = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
-                const midi = Math.round(69 + 12 * Math.log2(freq / 440));
-                note = noteNames[midi % 12];
-                if (Math.abs(freq - 440) < 15) {
-                  status = 'Ajustado';
-                  cls = 'in-tune';
-                } else if (freq < 440) {
-                  status = 'Un poco bajo';
-                  cls = 'flat';
-                } else {
-                  status = 'Un poco alto';
-                  cls = 'sharp';
-                }
-              }
-
-              const needlePosition = 50 + ((freq % 600) / 600) * 100;
-              els.tunerNeedle.style.left = `${Math.min(100, Math.max(0, needlePosition))}%`;
-              updateState(status, note, `${freq.toFixed(1)} Hz`, cls);
-              tuner.rafId = requestAnimationFrame(process);
-            };
-
-            process();
-          } catch (error) {
-            console.error(error);
-            tuner.isActive = false;
-            els.tunerToggleBtn.classList.remove('active');
-            els.tunerToggleBtn.textContent = '🎙️ Encender Afinador';
-            updateState('No se pudo acceder al micrófono', '--', '0.0 Hz');
-          }
-        } else {
-          if (tuner.rafId) cancelAnimationFrame(tuner.rafId);
-          if (tuner.stream) tuner.stream.getTracks().forEach(track => track.stop());
-          if (tuner.audioContext) tuner.audioContext.close();
-          updateState('Micrófono desactivado', '--', '0.0 Hz');
-          els.tunerNeedle.style.left = '50%';
+    // Sortable
+    function initSortable() {
+      if (!window.Sortable) return;
+      if (sortableInstance) sortableInstance.destroy();
+      sortableInstance = Sortable.create(sundayList, {
+        animation: 150,
+        ghostClass: 'sortable-ghost',
+        onEnd: () => {
+          const newOrder = Array.from(sundayList.children).map(el => parseInt(el.dataset.index, 10));
+          allSongs = newOrder.map(idx => allSongs[idx]);
+          filteredSongs = allSongs;
+          renderSongs();
         }
       });
+    }
+
+    // UI States
+    function showLoading() {
+      sundayList.innerHTML = '<div class="loading-state">Cargando repertorio…</div>';
+    }
+
+    function showEmpty() {
+      sundayList.innerHTML = '<div class="empty-state">No hay canciones disponibles</div>';
+    }
+
+    function showError(message) {
+      sundayList.innerHTML = `<div class="error-state">${escapeHtml(message)}</div>`;
+    }
+
+    // Team Selection
+    function buildTeamButtons() {
+      teamButtons.innerHTML = Object.keys(SHEET_CONFIG)
+        .map(team => `
+          <button type="button" class="team-btn" data-team="${team}">
+            ${team}
+            <span>→</span>
+          </button>
+        `)
+        .join('');
+
+      teamButtons.addEventListener('click', (e) => {
+        const btn = e.target.closest('.team-btn');
+        if (btn) selectTeam(btn.dataset.team);
+      });
+    }
+
+    function selectTeam(team) {
+      currentTeam = team;
+      localStorage.setItem('alabanza-team', team);
+      teamBadge.textContent = team;
+      locationSelectorScreen.style.display = 'none';
+      loadTeamSongs(team);
+    }
+
+    // Utilities
+    function escapeHtml(text) {
+      const map = {
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#039;'
+      };
+      return String(text).replace(/[&<>"']/g, c => map[c]);
+    }
+
+    // Init
+    buildTeamButtons();
+    teamBadge.addEventListener('click', () => {
+      locationSelectorScreen.style.display = 'flex';
+    });
+
+    // Load saved team or show selector
+    const savedTeam = localStorage.getItem('alabanza-team');
+    if (savedTeam && SHEET_CONFIG[savedTeam]) {
+      currentTeam = savedTeam;
+      teamBadge.textContent = savedTeam;
+      locationSelectorScreen.style.display = 'none';
+      loadTeamSongs(savedTeam);
+    } else {
+      locationSelectorScreen.style.display = 'flex';
     }
   </script>
 </body>
